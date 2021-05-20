@@ -3,13 +3,29 @@ package com.sgg.JDBC2.dao;
 import com.sgg.JDBC2.utils.JDBCUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 
-public class BaseDAO {
+public class BaseDAO<T>{
+    private Class<T> type;
+    public BaseDAO(){
+        Class clazz = this.getClass();
+        System.out.println("当前运行类："+clazz);
+        Type type = clazz.getGenericSuperclass();
+        System.out.println("type-->"+type);
+        ParameterizedType parameterizedType = (ParameterizedType)type;
+        System.out.println("parameterizedType-->"+parameterizedType);
+        Type[] actualTypeArgument = parameterizedType.getActualTypeArguments();
+        for(int i=0;i<actualTypeArgument.length;i++){
+            System.out.println("actualTypeArgument-->"+actualTypeArgument[i]);
+        }
+        this.type = (Class<T>)actualTypeArgument[0];
+    }
     // 更新数据
     public int update(Connection connection,String sql,Object...args){
         PreparedStatement ps=null;

@@ -40,7 +40,7 @@ public class testDAO {
     public void test2(){
         Connection connection = null;
         try{
-            connection = JDBCUtils.connection();
+            connection = JDBCUtils.c3p0();
             connection.setAutoCommit(false);
             cdi.deleteById(connection,25);
             connection.commit();
@@ -59,7 +59,9 @@ public class testDAO {
     public void test3(){
         Connection connection = null;
         try{
-            connection = JDBCUtils.connection();
+            //connection = JDBCUtils.c3p0();
+            //connection = JDBCUtils.dbcp();
+            connection = JDBCUtils.druid();
             Customer cust = cdi.queryById(connection,8);
             System.out.println(cust);
         }catch (Exception e){

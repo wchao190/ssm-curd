@@ -1,12 +1,18 @@
 package com.sgg.JDBC2.dao;
 
 import com.sgg.JDBC2.bean.Customer;
+import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.List;
 
-public class CustomerDAOImpl extends BaseDAO implements CustomerDAO {
+public class CustomerDAOImpl extends BaseDAO<Customer> implements CustomerDAO {
+
+    @Test
+    public void test1(){
+       new CustomerDAOImpl();
+    }
     @Override
     public int insert(Connection connection, Customer cust) {
         String sql = "insert into customers(name,email,birth) values(?,?,?)";
