@@ -1,15 +1,18 @@
 package com.atguigu.controller;
 
 import com.atguigu.bean.Employee;
+import com.atguigu.bean.Msg;
 import com.atguigu.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageInterceptor;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +22,8 @@ public class EmployeeController {
 
     @Autowired
     EmployeeService employeeService;
-    @RequestMapping("/emps")
+
+    //@RequestMapping("/emps")
     public String getAllEmployee(@RequestParam(value = "index",defaultValue = "1")Integer index, Model model){
         //引入PageHelper分页插件，startPage不是分页查询，在查询之前调用，传入页码，以及每页的大小
         PageHelper.startPage(index,5);
@@ -30,5 +34,14 @@ public class EmployeeController {
         PageInfo<Employee> employeePageInfo = new PageInfo<>(list,5);
         model.addAttribute("pageInfo",employeePageInfo);
         return "list";
+    }
+
+    @RequestMapping("/emps")
+    @ResponseBody
+    public Msg getEmpsJson(@RequestParam(value = "index",defaultValue = "1")Integer index){
+        PageHelper.startPage(index,5);
+        List<Employee> all = employeeService.getAll(null);
+        PageInfo<Employee> pageInfos = new PageInfo<>(all);
+        return Msg.success().add("pageInfo",pageInfos);
     }
 }

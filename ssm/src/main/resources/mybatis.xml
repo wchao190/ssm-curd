@@ -8,12 +8,16 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+
     <typeAliases>
         <package name="com.atguigu.bean"/>
     </typeAliases>
     
     <plugins>
-        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--分页合理化参数, 页码小于0,显示第一页数据, 页面大于总页数,显示最后一页数据-->
+            <property name="reasonable" value="true"/>
+        </plugin>
     </plugins>
 
 </configuration>

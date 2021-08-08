@@ -42,6 +42,7 @@ public class MvcTest {
         MockHttpServletRequest request = mvcResult.getRequest();
         // 获取请求域中的属性的值
         PageInfo pageInfo = (PageInfo)request.getAttribute("pageInfo");
+        System.out.println(pageInfo);
         System.out.println("当前页码:"+pageInfo.getPageNum());
         System.out.println("总页码:"+ pageInfo.getPages());
         System.out.println("总记录数："+ pageInfo.getTotal());
