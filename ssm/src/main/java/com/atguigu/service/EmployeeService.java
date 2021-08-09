@@ -15,8 +15,14 @@ public class EmployeeService {
     @Autowired
     EmployeeMapper employeeMapper;
 
+    //查询所有员工
     public List<Employee> getAll(EmployeeExample example) {
 
         return  employeeMapper.selectByExampleWithDept(example);
+    }
+
+    //保存新增员工
+    public void saveEmployee(Employee employee) {
+        employeeMapper.insertSelective(employee);
     }
 }

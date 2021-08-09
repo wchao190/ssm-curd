@@ -21,6 +21,63 @@
         <script src="${path}/static/bootstrap-3.4.1-dist/js/bootstrap.min.js"></script>
     </head>
     <body>
+    <!--添加员工弹窗, 利用 bootstrap -->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" id="addEmp">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">添加员工</h4>
+                </div>
+                <!--弹窗主体内容区-->
+                <div class="modal-body">
+                    <!--自作表单-->
+                    <form class="form-horizontal">
+                        <!--在 form-group 内定义输入框、下拉框等 -->
+                        <div class="form-group">
+                            <!--定义标题-->
+                            <label class="col-sm-2 control-label">lastName</label>
+                            <!--定义输入框, 长度10列, 并增加提示信息 -->
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="请输入姓名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">email</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="email" name="email" placeholder="请输入邮箱">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">gender</label>
+                            <div class="col-sm-10">
+                                <!--定义内联单选按钮-->
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" id="gender1" value="男" checked="checked"> 男
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" id="gender2" value="女"> 女
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">department</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" name="dptId" id="dept">
+
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--弹窗底部操作按钮-->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="submitBtn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--搭建首页-->
     <div class="container">
         <!--标题-->
@@ -30,7 +87,7 @@
         <!--操作-->
         <div class="row">
             <div class="col-md-8 col-md-offset-8">
-                <button type="button" class="btn btn-success">添加</button>
+                <button type="button" class="btn btn-success" id="add_emp_btn">添加</button>
                 <button type="button" class="btn btn-danger">删除</button>
             </div>
         </div>
@@ -69,6 +126,7 @@
 
     <script  type="text/javascript">
         // 进入页面就 获取首页数据
+        var totalPage;
         $(function () {
             to_page(1);
         });
@@ -118,6 +176,7 @@
             // 调用前先清空信息
             $("#page_info").empty();
             $("#page_info").append("当前第"+result.extend.pageInfo.pageNum+"页,总共"+result.extend.pageInfo.pages+"页,总计"+result.extend.pageInfo.total+"条记录");
+            totalPage = result.extend.pageInfo.total;
         }
         //解析 显示分页条
         function build_page_nav(result) {
@@ -174,6 +233,43 @@
             ul.append(nextPageLi).append(lastPageLi);
             $("#page_nav").append(ul);
         }
+        //为添加员工按钮绑定单击事件，弹出模态窗
+        $("#add_emp_btn").click(function () {
+            //发送 ajax 请求，查询部门
+            getDept();
+            $("#addEmp").modal();
+        });
+
+        //查询部门信息
+        function getDept() {
+            $.get(
+                {"url":"${path}/depts",
+                "dataType": "json",
+                "success":function (data) {
+                    //获取返回的信息，将部门信息通过 dom插入到 下拉选项
+                    $.each(data.extend.dept,function (index,item) {
+                        $("<option></option>").attr("value",item.dId).append(item.dptName).appendTo("#dept");
+                    });
+                },
+                "data":""}
+            );
+        }
+
+        //提交保存新增员工
+        $("#submitBtn").click(function () {
+            $.post(
+                    {   "url":"${path}/emp",
+                        "data":$("#addEmp form").serialize(),
+                        "dataType":"json",
+                        "success":function (data) {
+                            //提交成功之后，关闭模态弹窗
+                            $('#addEmp').modal('hide');
+                            //发送请求，进入最后一页，查询添加状态,定义一个总页数，用查询条数代替总页数，
+                            to_page(totalPage);
+                        }
+                    }
+            )
+        })
     </script>
 
     </body>
